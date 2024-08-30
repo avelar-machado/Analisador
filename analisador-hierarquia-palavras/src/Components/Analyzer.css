@@ -1,0 +1,34 @@
+.analyzer {
+    margin: 20px 0;
+  }
+  
+  .analyzer input {
+    padding: 8px;
+    width: 100%;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  
+  .analyzer button {
+    padding: 8px 12px;
+    background-color: #008CBA;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .analyzer button:hover {
+    background-color: #007bb5;
+  }
+  
+  .analyzer ul {
+    list-style-type: none;
+    padding-left: 20px;
+  }
+  
+  .analyzer li {
+    margin: 5px 0;
+  }
+  
