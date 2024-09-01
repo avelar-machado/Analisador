@@ -1,24 +1,30 @@
 import React, { useState } from 'react';
 import './TreeBuilder.css';
 
+// Define a estrutura do nó da árvore
 interface TreeNode {
   id: string;
   name: string;
   children: TreeNode[];
 }
 
+// Define as propriedades esperadas pelo componente TreeBuilder
 interface TreeBuilderProps {
   onSave: (newTree: TreeNode[]) => void;
 }
 
+// Componente TreeBuilder para construir e salvar uma árvore hierárquica
 const TreeBuilder: React.FC<TreeBuilderProps> = ({ onSave }) => {
+  // Estado para armazenar a árvore, o nome do nó a ser adicionado, o id do pai e a mensagem de sucesso
   const [tree, setTree] = useState<TreeNode[]>([]);
   const [nodeName, setNodeName] = useState<string>('');
   const [parentId, setParentId] = useState<string | null>(null);
   const [saveMessage, setSaveMessage] = useState<string>('');
 
+  // Gera um ID único para um novo nó
   const generateUniqueId = () => Math.random().toString(36).substr(2, 9);
 
+  // Adiciona um novo nó à árvore
   const addNode = (parentId: string | null, nodeName: string) => {
     const newNode: TreeNode = {
       id: generateUniqueId(),
@@ -27,7 +33,7 @@ const TreeBuilder: React.FC<TreeBuilderProps> = ({ onSave }) => {
     };
 
     if (parentId === null) {
-      // Se não houver pai, adicione como nó raiz
+      // Se não houver pai, adiciona o nó como raiz
       setTree([...tree, newNode]);
     } else {
       const updatedTree = [...tree];
@@ -47,22 +53,25 @@ const TreeBuilder: React.FC<TreeBuilderProps> = ({ onSave }) => {
       setTree(updatedTree);
     }
 
+    // Limpa o estado dos inputs após adicionar o nó
     setNodeName('');
     setParentId(null);
   };
 
+  // Salva a árvore como um arquivo JSON
   const handleSave = () => {
     const json = JSON.stringify(tree, null, 2);
     const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'hierarquia.json';
+    a.download = 'hierarchy.json';
     a.click();
     onSave(tree);
     setSaveMessage('Hierarquia salva com sucesso!');
   };
 
+  // Renderiza a árvore como uma lista aninhada
   const renderTree = (nodes: TreeNode[]) => {
     return (
       <ul>
@@ -76,6 +85,7 @@ const TreeBuilder: React.FC<TreeBuilderProps> = ({ onSave }) => {
     );
   };
 
+  // Gera opções para o select com base na árvore
   const generateSelectOptions = (nodes: TreeNode[], depth: number = 0): JSX.Element[] => {
     return nodes.flatMap((node) => [
       <option key={node.id} value={node.id}>

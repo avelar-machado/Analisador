@@ -1,0 +1,58 @@
+[
+  {
+    "id": "dd174vqmt",
+    "name": " Animais",
+    "children": [
+      {
+        "id": "loi4ur1k8",
+        "name": " Mamíferos",
+        "children": [
+          {
+            "id": "lijog7dm1",
+            "name": " Carnívoros",
+            "children": [
+              {
+                "id": "npqxoit1d",
+                "name": " Felinos",
+                "children": [
+                  {
+                    "id": "e3saplf2t",
+                    "name": " Leões",
+                    "children": []
+                  },
+                  {
+                    "id": "rrdtmvfjd",
+                    "name": " Tigres",
+                    "children": []
+                  },
+                  {
+                    "id": "tbd7cj62x",
+                    "name": " Jaguars",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "4xjtdf31m",
+        "name": " Aves",
+        "children": [
+          {
+            "id": "7nvb7816w",
+            "name": " Pássaros",
+            "children": [
+              {
+                "id": "8rwfe7la7",
+                "name": "Papagaios",
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

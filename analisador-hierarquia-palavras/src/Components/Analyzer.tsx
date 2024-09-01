@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
 import './Analyzer.css';
 
+// Define a estrutura do nó da árvore para análise
 interface TreeNode {
   name: string;
   children: TreeNode[];
 }
 
+// Define as propriedades esperadas pelo componente Analyzer
 interface AnalyzerProps {
   tree: TreeNode[];
 }
 
+// Componente Analyzer para analisar uma frase em relação à árvore fornecida
 const Analyzer: React.FC<AnalyzerProps> = ({ tree }) => {
+  // Estado para armazenar a frase, resultados da análise, profundidade, configuração de verbose e tempos de execução
   const [phrase, setPhrase] = useState<string>('');
   const [results, setResults] = useState<Record<string, number>>({});
   const [depth, setDepth] = useState<number>(1);
