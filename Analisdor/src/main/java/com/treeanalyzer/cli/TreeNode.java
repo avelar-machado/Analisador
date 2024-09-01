@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.treeanalyzer.cli;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,8 +17,7 @@ public class TreeNode {
     private List<TreeNode> children;
 
     // Construtor padrão
-    public TreeNode() {
-    }
+    public TreeNode() {}
 
     // Getters e Setters
     public String getId() {
