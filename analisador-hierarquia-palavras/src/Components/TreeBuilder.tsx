@@ -1,73 +1,74 @@
 import React, { useState } from 'react';
 import './TreeBuilder.css';
 
-// Define a interface TreeNode que representa um nó na árvore hierárquica
 interface TreeNode {
+  id: string;
   name: string;
   children: TreeNode[];
 }
 
-// Define a interface para as props do componente TreeBuilder
 interface TreeBuilderProps {
   onSave: (newTree: TreeNode[]) => void;
 }
 
-// Componente TreeBuilder para construir a hierarquia de palavras
 const TreeBuilder: React.FC<TreeBuilderProps> = ({ onSave }) => {
-  // Estado que armazena a árvore de palavras
   const [tree, setTree] = useState<TreeNode[]>([]);
-  // Estado para armazenar o nome do novo nó a ser adicionado
   const [nodeName, setNodeName] = useState<string>('');
-  // Estado para armazenar o índice do nó pai selecionado (ou null se for raiz)
-  const [parentIndex, setParentIndex] = useState<number | null>(null);
-  // Feedback ao Usuário
+  const [parentId, setParentId] = useState<string | null>(null);
   const [saveMessage, setSaveMessage] = useState<string>('');
 
-  // Função para adicionar um novo nó na árvore
-  const addNode = (parentIndex: number | null, nodeName: string) => {
-    if (parentIndex === null) {
-      // Se o nó não tem pai, adiciona como raiz
-      setTree([...tree, { name: nodeName, children: [] }]);
+  const generateUniqueId = () => Math.random().toString(36).substr(2, 9);
+
+  const addNode = (parentId: string | null, nodeName: string) => {
+    const newNode: TreeNode = {
+      id: generateUniqueId(),
+      name: nodeName,
+      children: [],
+    };
+
+    if (parentId === null) {
+      // Se não houver pai, adicione como nó raiz
+      setTree([...tree, newNode]);
     } else {
-      // Caso contrário, adiciona como filho do nó pai
       const updatedTree = [...tree];
-      const addNodeRecursively = (nodes: TreeNode[], index: number): void => {
-        if (index === 0) {
-          nodes.push({ name: nodeName, children: [] });
-        } else {
-          addNodeRecursively(nodes[index].children, index - 1);
-        }
+
+      // Função recursiva para adicionar o nó ao pai correto
+      const addNodeRecursively = (nodes: TreeNode[]) => {
+        nodes.forEach((node) => {
+          if (node.id === parentId) {
+            node.children.push(newNode);
+          } else {
+            addNodeRecursively(node.children);
+          }
+        });
       };
-      addNodeRecursively(updatedTree, parentIndex);
+
+      addNodeRecursively(updatedTree);
       setTree(updatedTree);
     }
+
+    setNodeName('');
+    setParentId(null);
   };
 
-  // Função para salvar a árvore em um arquivo JSON e chamar a prop onSave
   const handleSave = () => {
-    // Converte a árvore em JSON
     const json = JSON.stringify(tree, null, 2);
-    // Cria um Blob para download
     const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
-    // Cria um link para o download do arquivo
     const a = document.createElement('a');
     a.href = url;
     a.download = 'hierarquia.json';
     a.click();
-    // Chama a função onSave passando a árvore atualizada
     onSave(tree);
     setSaveMessage('Hierarquia salva com sucesso!');
   };
 
-  // Função para renderizar a árvore recursivamente
   const renderTree = (nodes: TreeNode[]) => {
     return (
       <ul>
-        {nodes.map((node, index) => (
-          <li key={index}>
+        {nodes.map((node) => (
+          <li key={node.id}>
             {node.name}
-            {/* Renderiza filhos se existirem */}
             {node.children.length > 0 && renderTree(node.children)}
           </li>
         ))}
@@ -75,35 +76,35 @@ const TreeBuilder: React.FC<TreeBuilderProps> = ({ onSave }) => {
     );
   };
 
+  const generateSelectOptions = (nodes: TreeNode[], depth: number = 0): JSX.Element[] => {
+    return nodes.flatMap((node) => [
+      <option key={node.id} value={node.id}>
+        {'-'.repeat(depth) + ' ' + node.name}
+      </option>,
+      ...(node.children.length > 0 ? generateSelectOptions(node.children, depth + 1) : []),
+    ]);
+  };
+
   return (
     <div className="tree-builder">
       <h2>Construtor de Hierarquia</h2>
       <div>
-        {/* Campo de texto para inserir o nome do novo nó */}
         <input
           type="text"
           value={nodeName}
           onChange={(e) => setNodeName(e.target.value)}
           placeholder="Nome do Nó"
         />
-        {/* Dropdown para selecionar o nó pai ou raiz */}
         <select
-          onChange={(e) => setParentIndex(e.target.value === '' ? null : parseInt(e.target.value))}
+          value={parentId || ''}
+          onChange={(e) => setParentId(e.target.value || null)}
         >
           <option value="">Sem Pai (Raiz)</option>
-          {/* Mapeia os nós da árvore para as opções do dropdown */}
-          {tree.map((node, index) => (
-            <option key={index} value={index}>
-              {node.name}
-            </option>
-          ))}
+          {generateSelectOptions(tree)}
         </select>
-        {/* Botão para adicionar o novo nó */}
-        <button onClick={() => addNode(parentIndex, nodeName)}>Adicionar Nó</button>
+        <button onClick={() => addNode(parentId, nodeName)}>Adicionar Nó</button>
       </div>
-      {/* Renderiza a árvore */}
       {renderTree(tree)}
-      {/* Botão para salvar a árvore em JSON */}
       <button onClick={handleSave}>Salvar Hierarquia</button>
       {saveMessage && <p className="success-message">{saveMessage}</p>}
     </div>
